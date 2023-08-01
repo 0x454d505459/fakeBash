@@ -118,10 +118,8 @@ pub fn main() !void {
         }
         // ----- Command parsing section
         if (promptStringBuffer.items.len == 0) continue; // Dont do anything if user just pressed enter
-        // std.debug.print("{s}\n", .{promptStringBuffer.items});
         var cmdArgs = split(u8, promptStringBuffer.items, ' ');
         while (cmdArgs.next()) |arg| {
-            //try commandArgumentsList.append(@as([*:0]const u8, @ptrCast(&arg[0.. :0])));
             try commandArgumentsList.append(arg);
         }
 
@@ -130,7 +128,6 @@ pub fn main() !void {
         if (pid == 0) { // Here we are the child
             const e = std.process.execv(alloc, commandArgumentsList.items);
             switch (e) {
-                //error.FileNotFound => std.debug.print("shell: Unknown command: {s}\n", .{commandArgumentsList.items[0]}),
                 error.FileNotFound => try prettyError("Unknown command: {s}", .{commandArgumentsList.items[0]}),
                 error.InvalidExe => try prettyError("File exists but isn't executable", .{}),
                 error.IsDir => try prettyError("Target is a directory, not an executable", .{}),
