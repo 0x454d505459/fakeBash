@@ -11,6 +11,12 @@ const VTIME = 6;
 const STDIN_FD = 0;
 const NULLENV = [_:null]?[*:0]u8{null};
 
+// colors and styles
+const RED = "\x1B[38;2;224;107;116m";
+const GREEN = "\x1B[38;2;152;195;121m";
+const BOLD = "\x1B[1m";
+const DEFAULT = "\x1B[0m";
+
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 var alloc = gpa.allocator();
 var hostnameBuffer: [os.HOST_NAME_MAX]u8 = undefined;
@@ -38,7 +44,16 @@ fn getch(terminal_fd: u8) !u8 {
 
 fn prompt(file: std.fs.File, username: []const u8, hostname: []const u8, path: []const u8) !void {
     const writer = file.writer();
-    try writer.print("[{s}@{s} {s}]$ ", .{ username, hostname, path });
+    try writer.print("{s}{s}[{s}@{s}{s} {s}{s}]${s} ", .{
+        BOLD,
+        RED,
+        username,
+        hostname,
+        GREEN,
+        path,
+        RED,
+        DEFAULT,
+    });
 }
 
 fn clearScreen(file: std.fs.File) !void {
@@ -58,7 +73,6 @@ fn eraseOneCharFromPrompt(file: std.fs.File) !void {
 
 pub fn main() !void {
     const stdout = io.getStdOut();
-
     const hostname = os.gethostname(&hostnameBuffer) catch "unavailable";
 
     var last_exit_code: u32 = 0;
