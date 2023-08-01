@@ -93,7 +93,13 @@ pub fn main() !void {
         while (true) {
             const char = try getch(STDIN_FD);
             switch (char) {
-                3, 4 => break :outer, // handle ^C, ^D
+                3 => { // handle ^C
+                    try stdout.writer().writeAll("^C\n");
+                    break;
+                },
+                4 => { // handle ^D
+                    break :outer;
+                },
                 12 => { // Handle ^L
                     //try stdout.print("\x1B[2J\x1B[H", .{});
                     try clearScreen(stdout);
@@ -140,5 +146,5 @@ pub fn main() !void {
         commandArgumentsList.clearRetainingCapacity();
     }
 
-    std.debug.print("\nQuiting the fake bash...\n", .{});
+    std.debug.print("\nexit\n", .{});
 }
